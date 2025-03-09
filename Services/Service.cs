@@ -1,7 +1,7 @@
 ﻿
 using PioneersAcademy.Domains.Entities;
 using PioneersAcademy.Domains.Enums;
-using PioneersAcademy.Domains.Logs;
+using PioneersAcademy.Domains.ErrorLogs;
 
 namespace PioneersAcademy.PhoneBookServices
 {
