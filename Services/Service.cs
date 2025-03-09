@@ -1,6 +1,7 @@
 ﻿
 using PioneersAcademy.Domains.Entities;
 using PioneersAcademy.Domains.Enums;
+using PioneersAcademy.Domains.Logs;
 
 namespace PioneersAcademy.PhoneBookServices
 {
@@ -88,7 +89,7 @@ namespace PioneersAcademy.PhoneBookServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ErrorLogs.Log(ex);
                 throw;
             }
             return result;
