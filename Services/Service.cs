@@ -1,12 +1,16 @@
 ﻿
-using Domains.Entities;
-using Domains.Enums;
+using PioneersAcademy.Domains.Entities;
+using PioneersAcademy.Domains.Enums;
 
-namespace Services
+namespace PioneersAcademy.PhoneBookServices
 {
     public class Service
     {
+        #region Fields
         private List<PhoneContact> _users;
+        #endregion
+
+        #region Constructors
         public Service()
         {
             if (_users == null)
@@ -14,6 +18,14 @@ namespace Services
                 _users = new List<PhoneContact>();
             }
         }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Add a new user to the phone book
+        /// </summary>
+        /// <param name="name">String Name</param>
+        /// <param name="phones">Phone Numbers as a list of strings</param>
         private void AddUser(string name, List<string> phones)
         {
             PhoneContact user = new PhoneContact();
@@ -22,42 +34,89 @@ namespace Services
             _users.Add(user);
         }
 
+        /// <summary>
+        /// Search for a user by name or phone number
+        /// </summary>
+        /// <param name="query">String to detect type of searching</param>
+        /// <returns>Returns list of Contacts if the search found the Contact if no returns null</returns>
         public List<PhoneContact> Search(string query)
         {
             List<PhoneContact> result = new List<PhoneContact>();
-            foreach (PhoneContact user in _users)
+            try
             {
-                if (user.Name.ToLower() == query.ToLower())
+                if ((query.ToLower() != "n" && query.ToLower() != "p") || string.IsNullOrEmpty(query) || string.IsNullOrWhiteSpace(query))
                 {
-                    result.Add(user);
+                    Console.WriteLine("Please enter a valid choice next time");
+                    return null;
+                }
+
+                if (query.ToLower() == "n")
+                {
+                    Console.Write("Enter the name to start searching: ");
+                    var name = Console.ReadLine();
+                    if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
+                    {
+                        Console.WriteLine("Please enter a valid name");
+                        return null;
+                    }
+                    else if (_users != null && _users.Count != 0)
+                    {
+                        var found = (from user in _users
+                                    where user.Name==name
+                                    select user).FirstOrDefault();
+                        result.Add(found);
+                    }
                 }
                 else
                 {
-                    foreach (string phone in user.Phone)
+                    Console.Write("Enter the phone number to start searching: ");
+                    var phone = Console.ReadLine();
+                    if (string.IsNullOrEmpty(phone) || string.IsNullOrWhiteSpace(phone))
                     {
-                        if (phone == query)
-                        {
-                            result.Add(user);
-                            break;
-                        }
+                        Console.WriteLine("Please enter a valid phone");
+                        return null;
                     }
+                    else if (_users!= null && _users.Count!=0)
+                    {
+                        var found = (from user in _users
+                                     where user.Phone.Contains(phone)
+                                     select user).FirstOrDefault();
+                        result.Add(found);
+                    }
+
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
             }
             return result;
         }
+
+        /// <summary>
+        /// Print the users in the phone book
+        /// </summary>
+        /// <param name="contacts">Phone contact Object</param>
         public static void PrintUsers(List<PhoneContact> contacts)
         {
-            foreach (PhoneContact user in contacts)
+            foreach (PhoneContact contact in contacts)
             {
-                Console.WriteLine($"Name: {user.Name}");
+                Console.WriteLine($"Name: {contact.Name}");
                 Console.WriteLine("Phones:");
-                foreach (string phone in user.Phone)
+                foreach (string phone in contact.Phone)
                 {
                     Console.WriteLine(phone);
                 }
                 Console.WriteLine();
             }
         }
+
+        /// <summary>
+        /// Edit the user info
+        /// </summary>
+        /// <param name="name">String Name</param>
+        /// <returns>Returns the status for editing</returns>
         public Status EditUser(string name)
         {
             var user = new PhoneContact();
@@ -85,8 +144,8 @@ namespace Services
                 case 1:
                     Console.Write("Enter new name: ");
                     user.Name = Console.ReadLine();
-                    break;      
-                case 2:         
+                    break;
+                case 2:
                     Console.Write("Enter new phones (comma separated): ");
                     string phones = Console.ReadLine();
                     user.Phone = phones.Split(',').ToList();
@@ -104,6 +163,12 @@ namespace Services
             }
             return Status.success;
         }
+
+        /// <summary>
+        ///     Delete the user from the phone book
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Returns the status for deleting</returns>
         public Status DeleteUser(string name)
         {
             dynamic user = null;
@@ -126,6 +191,10 @@ namespace Services
             }
             return Status.success;
         }
+
+        /// <summary>
+        /// Serve the phone book
+        /// </summary>
         public void Serve()
         {
             bool exit = false;
@@ -163,7 +232,7 @@ namespace Services
                         PrintUsers(_users);
                         break;
                     case "3":
-                        Console.Write("Entar Name or Phone to start searching: ");
+                        Console.Write("Entar N for name search or P for phone search: ");
                         var resultContacts = Search(Console.ReadLine());
                         if (resultContacts == null || resultContacts.Count == 0)
                         {
@@ -228,5 +297,6 @@ namespace Services
                 }
             }
         }
+        #endregion
     }
 }

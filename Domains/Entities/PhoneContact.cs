@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Domains.Entities
+namespace PioneersAcademy.Domains.Entities
 {
     public class PhoneContact
     {

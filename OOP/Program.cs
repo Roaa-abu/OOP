@@ -1,12 +1,12 @@
-﻿using Services;
+﻿using PioneersAcademy.PhoneBookServices;
 
-namespace OOP
+namespace PioneersAcademy.PhoneBook
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            var service = new Service(); 
+            var service = new Service();
             service.Serve();
         }
     }
